@@ -15,3 +15,27 @@ function FormatDay(date){
     return dayOutput;
 }
 
+//Calling function init();
+init();
+
+//Function init();
+function init(){
+    //Get stored cities from localStorage
+    //Parsing the JSON string to an object
+    var storedCities = JSON.parse(localStorage.getItem("cities"));
+
+    // If cities were retrieved from localStorage, update the cities array to it
+    if (storedCities !== null) {
+        cities = storedCities;
+      }
+    // Render cities to the DOM
+    renderCities();
+    // console.log(cities);
+}
+
+//Function StoreCities()
+function storeCities(){
+   // Stringify and set "cities" key in localStorage to cities array
+  localStorage.setItem("cities", JSON.stringify(cities));
+  console.log(localStorage);
+}
