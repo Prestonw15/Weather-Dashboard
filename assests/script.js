@@ -66,4 +66,93 @@ function renderCities() {
         getResponseWeather(city)
     };
 }   
+ //When form is submitted...
+ $("#add-city").on("click", function(event){
+    event.preventDefault();
 
+  // This line will grab the city from the input box
+  var city = $("#city-input").val().trim();
+  
+  // Return from function early if submitted city is blank
+  if (city === "") {
+      return;
+  }
+  //Adding city-input to the city array
+  cities.push(city);
+  // Store updated cities in localStorage, re-render the list
+storeCities();
+renderCities();
+});
+
+ //When form is submitted...
+ $("#add-city").on("click", function(event){
+    event.preventDefault();
+
+  // This line will grab the city from the input box
+  var city = $("#city-input").val().trim();
+  
+  // Return from function early if submitted city is blank
+  if (city === "") {
+      return;
+  }
+  //Adding city-input to the city array
+  cities.push(city);
+  // Store updated cities in localStorage, re-render the list
+storeCities();
+renderCities();
+});
+
+//Function get Response Weather 
+
+function getResponseWeather(cityName){
+  var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" +cityName+ "&appid=" + key; 
+
+  //Clear content of today-weather
+  $("#today-weather").empty();
+  $.ajax({
+    url: queryURL,
+    method: "GET"
+  }).then(function(response) {
+      
+    // Create a new table row element
+    cityTitle = $("<h3>").text(response.name + " "+ FormatDay());
+    $("#today-weather").append(cityTitle);
+    var TempetureToNum = parseInt((response.main.temp)* 9/5 - 459);
+    var cityTemperature = $("<p>").text("Tempeture: "+ TempetureToNum + " °F");
+    $("#today-weather").append(cityTemperature);
+    var cityHumidity = $("<p>").text("Humidity: "+ response.main.humidity + " %");
+    $("#today-weather").append(cityHumidity);
+    var cityWindSpeed = $("<p>").text("Wind Speed: "+ response.wind.speed + " MPH");
+    $("#today-weather").append(cityWindSpeed);
+    var CoordLon = response.coord.lon;
+    var CoordLat = response.coord.lat;
+
+        //Api to get UV index
+        var queryURL2 = "https://api.openweathermap.org/data/2.5/uvi?appid="+ key+ "&lat=" + CoordLat +"&lon=" + CoordLon;
+        $.ajax({
+            url: queryURL2,
+            method: "GET"
+        }).then(function(responseuv) {
+            var cityUV = $("<span>").text(responseuv.value);
+            var cityUVp = $("<p>").text("UV Index: ");
+            cityUVp.append(cityUV);
+            $("#today-weather").append(cityUVp);
+            console.log(typeof responseuv.value);
+            if(responseuv.value > 0 && responseuv.value <=2){
+                cityUV.attr("class","green")
+            }
+            else if (responseuv.value > 2 && responseuv.value <= 5){
+                cityUV.attr("class","yellow")
+            }
+            else if (responseuv.value >5 && responseuv.value <= 7){
+                cityUV.attr("class","orange")
+            }
+            else if (responseuv.value >7 && responseuv.value <= 10){
+                cityUV.attr("class","red")
+            }
+            else{
+                cityUV.attr("class","purple")
+            }
+        });
+  });
+}
